@@ -6,7 +6,7 @@
 # -----------------------------------------------------------------------------
 
 # Android-cmake path: REPLACE WITH YOUR CMAKE PATH!
-AndroidCmake='/Users/rnaz/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake'
+AndroidCmake='cmake'
 
 # Android-ndk path: REPLACE WITH YOUR NDK PATH!
 NDK="/Users/rnaz/Library/Android/sdk/ndk/21.3.6528147"
@@ -15,9 +15,9 @@ NDK="/Users/rnaz/Library/Android/sdk/ndk/21.3.6528147"
 TOOLCHAIN="${NDK}/build/cmake/android.toolchain.cmake"
 
 # Supported Android ABI: TAKE ONLY WHAT YOU NEED!
-ABI=('armeabi-v7a' 'arm64-v8a' 'x86' 'x86_64')
+#ABI=('armeabi-v7a' 'arm64-v8a' 'x86' 'x86_64')
 #ABI=('arm64-v8a')
-#ABI=('armeabi-v7a')
+ABI=('armeabi-v7a')
 
 # path to strip tool: REPLACE WITH YOURS, ACCORDING TO OS!!
 STRIP_PATH="$NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin"
@@ -33,7 +33,7 @@ STRIP_TOOLS=(
 )
 
 # Minimum supported sdk: SHOULD BE GREATER THAN 16
-MIN_SDK=19
+MIN_SDK=21
 
 # Directory for storing native libraries
 NATIVE_DIR="output"
@@ -66,7 +66,7 @@ function compile_dlib {
 					  -DCMAKE_BUILD_TYPE=Release \
 					  -DCMAKE_CXX_FLAGS="-std=c++11 -frtti -fexceptions -O3 -mfpu=neon" \
 					  -DANDROID_ARM_NEON=TRUE \
-					  -DANDROID_ABI=${abi} \
+					  -DANDROID_ABI="${abi}" \
 					  -DANDROID_PLATFORM=${MIN_SDK} \
 					  -DANDROID_TOOLCHAIN=clang \
 					  -DANDROID_STL=c++_shared \
@@ -140,7 +140,7 @@ compile_dlib
 mkdir $NATIVE_DIR
 
 # COMMENT TO NOT COPY DLIB '.so' FILES
-#dlib_setup
+dlib_setup
 
 # COMMENT TO NOT COPY OPENCV '.so' FILES
 #opencv_setup
