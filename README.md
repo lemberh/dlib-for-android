@@ -17,13 +17,23 @@ From _AndroidStudio_ at `tool > SDK Manager > SDK Tools` install:
 	- Select the ABIs you want to support among: `armeabi-v7a`, `arm64-v8a`, `x86` and `x86_64`.
 	- Edit the `MIN_SDK` value, the minimum supported is `16`.
 	- Set the `PROJECT_PATH` variable according to your Android project path.
-4. Launch the __script__ and wait until completion (_comment what you don't need!_). It will:
+	- For OSX use `#!/bin/zsh` as default bash version is v3 which doesnt support associative arrays 
+4. For increasing performance link [OpenBLAS](https://github.com/xianyi/OpenBLAS) library:
+    - Instruction how to build [OpenBLAS](https://github.com/xianyi/OpenBLAS/wiki/How-to-build-OpenBLAS-for-Android)
+    - Cmake will automatically link `libopenblas.so` to project if you did `sudo make install` but there are few caveats
+        - In `dlib/CMakeLists.txt` add those line after `project(dlib)`
+        >  
+            # This is needed for cmake to be able to search outer direcries for Android builds
+            # more infor here https://stackoverflow.com/a/46057018/1307690
+            set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
+        - Also you might need to tweak `find_blas.cmake`file in `dlib/cmake_utils` there is line which is responsible for finding BLAS library. Something like this `find_library(cblas_lib NAMES openblasp openblas PATHS ${extra_paths})` make sure that it points to proper library name. Library name will depend on architecture for which it was build, for example (`libopenblas_armv7p-r0.3.10.so` -> `find_library(cblas_lib NAMES openblas_armv7p-r0.3.10 PATHS ${extra_paths})`).
+5. Launch the __script__ and wait until completion (_comment what you don't need!_). It will:
 	- Compile _Dlib_ for multiple _ABI_,
 	- Copy the Dlib headers and `libdlib.so` to your project,
 	- Copy the `lib_opencv4.so` to your project.
-5. Edit your `CMakeLists` like [this one](https://gist.github.com/Luca96/4e7d6a0d0271c7bd147aea7d8c3681d6).
-6. Update your `build.gradle` (app) file in order to support __CMake__ [example](https://gist.github.com/Luca96/32a66ddb8beb78712606cb375ebd4e9d).
-7. Build and Enjoy! 
+6. Edit your `CMakeLists` like [this one](https://gist.github.com/Luca96/4e7d6a0d0271c7bd147aea7d8c3681d6).
+7. Update your `build.gradle` (app) file in order to support __CMake__ [example](https://gist.github.com/Luca96/32a66ddb8beb78712606cb375ebd4e9d).
+8. Build and Enjoy!
 
 A complete tutorial is available [here](https://medium.com/@luca_anzalone/setting-up-dlib-and-opencv-for-android-3efdbfcf9e7f).
 

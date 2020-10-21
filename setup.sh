@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/zsh
+##!/bin/bash for linux
 # Luca Anzalone
 
 # -----------------------------------------------------------------------------
@@ -17,7 +18,8 @@ TOOLCHAIN="${NDK}/build/cmake/android.toolchain.cmake"
 # Supported Android ABI: TAKE ONLY WHAT YOU NEED!
 #ABI=('armeabi-v7a' 'arm64-v8a' 'x86' 'x86_64')
 #ABI=('arm64-v8a')
-ABI=('armeabi-v7a')
+ABI=('x86' 'x86_64')
+#ABI=('armeabi-v7a')
 
 # path to strip tool: REPLACE WITH YOURS, ACCORDING TO OS!!
 STRIP_PATH="$NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin"
@@ -28,8 +30,8 @@ declare -A STRIP_TOOLS
 STRIP_TOOLS=(
     ['armeabi-v7a']=$STRIP_PATH/arm-linux-androideabi-strip
     ['arm64-v8a']=$STRIP_PATH/aarch64-linux-android-strip
-#    ['x86']=$STRIP_PATH/x86_64-linux-android-strip
-#    ['x86_64']=$STRIP_PATH/x86_64-linux-android-strip
+    ['x86']=$STRIP_PATH/x86_64-linux-android-strip
+    ['x86_64']=$STRIP_PATH/x86_64-linux-android-strip
 )
 
 # Minimum supported sdk: SHOULD BE GREATER THAN 16
@@ -100,13 +102,15 @@ function dlib_setup {
     echo "=> '$NATIVE_DIR/dlib/include/dlib' created."
 
 	echo "=> Copying Dlib headers..."
-	cp -v -r "$DLIB_PATH/dlib" "$NATIVE_DIR/dlib/include/dlib"
+	cp -v -r "$DLIB_PATH/dlib" "$NATIVE_DIR/dlib/include"
+	cp -v -r "$DLIB_PATH/build/$abi/dlib/config.h" "$NATIVE_DIR/dlib/include/dlib"
+	cp -v -r "$DLIB_PATH/build/$abi/dlib/revision.h" "$NATIVE_DIR/dlib/include/dlib"
 
 	echo "=> Copying 'libdlib.so' for each ABI..."
 	for abi in "${ABI[@]}"
 	do
 		mkdir "$NATIVE_DIR/dlib/lib/$abi"
-		cp -v "$DLIB_PATH/build/$abi/dlib/libdlib.so" "$NATIVE_DIR/dlib/lib/$abi"
+		cp -v -r "$DLIB_PATH/build/$abi/dlib/libdlib.so" "$NATIVE_DIR/dlib/lib/$abi"
 		echo " > Copied libdlib.so for $abi"
 	done
 }
